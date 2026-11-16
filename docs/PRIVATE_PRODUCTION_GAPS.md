@@ -58,3 +58,18 @@ The initial core is an early development slice. It is not production-ready, does
 - [x] Permission tests for no-grant denial, source isolation, scope restriction, read-only operation allowlist, expiry and revocation (tests/test_permissions.py).
 
 **Critical distinction:** these are volatile in-memory contract implementations only. They are not durable grants, owner authentication, encryption, OS key storage, connector enforcement, or a production vault. No real personal data may be connected or imported. The new commits' CI status is not yet verified by the available workflow-run view; do not infer a pass from earlier commits.
+
+
+## Architecture reconciliation hold — ARX-137 / ARX-139 / ARX-141 / ARX-152
+
+The experimental memory and permission modules are NOT canonical contracts and must not be treated as a schema freeze. ARX-137/141 require independent dimensions: record_type, cognitive_type, subject_namespace, principal_scope, source_trust, epistemic_status, lifecycle status, authority_scope, retention/access policy, lineage, integrity/version and deletion tombstone. ARX-152 keeps typed envelopes logical and explicitly says universal MemoryRecord schema is not frozen. The current scaffold enums are intentionally incomplete and must not be used for persistence or real personal data.
+
+Before any persistent memory implementation:
+- [ ] Field-by-field mapping of ARX-137 ↔ ARX-139 ↔ ARX-141 and ARX-152 logical envelopes.
+- [ ] Keep source trust, epistemic status, lifecycle, authority and namespace as separate dimensions.
+- [ ] Separate capability registry from authorization/grant records.
+- [ ] Define immutable evidence ledger, candidate/quarantine/active views, typed relations and non-amplification rules.
+- [ ] Define deletion closure, descendant/index/cache/backup propagation and audit evidence.
+- [ ] Independent review of enum semantics and synthetic transition oracle.
+
+The current permission broker is only an experimental in-memory scope/expiry/revocation test scaffold. It is not the ARX-152 Permission Reference Monitor and cannot authorize connector dispatch.
