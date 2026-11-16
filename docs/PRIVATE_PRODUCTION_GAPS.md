@@ -48,3 +48,13 @@
 ## Release truthfulness
 
 The initial core is an early development slice. It is not production-ready, does not store personal memory, does not encrypt a personal vault, does not use an LLM, and has not been security-reviewed. Capability status must be tied to a commit and reproducible tests.
+
+
+## Additional contract slices (2026-11-16)
+
+- [x] Typed memory record contract and volatile in-memory store (src/qaraqalpaq/memory.py).
+- [x] Memory contract tests for provenance, namespaces, temporal validity, confidence bounds, conflict links and correction lineage (tests/test_memory.py).
+- [x] Per-source, explicit-scope read permission broker contract (src/qaraqalpaq/permissions.py).
+- [x] Permission tests for no-grant denial, source isolation, scope restriction, read-only operation allowlist, expiry and revocation (tests/test_permissions.py).
+
+**Critical distinction:** these are volatile in-memory contract implementations only. They are not durable grants, owner authentication, encryption, OS key storage, connector enforcement, or a production vault. No real personal data may be connected or imported. The new commits' CI status is not yet verified by the available workflow-run view; do not infer a pass from earlier commits.
