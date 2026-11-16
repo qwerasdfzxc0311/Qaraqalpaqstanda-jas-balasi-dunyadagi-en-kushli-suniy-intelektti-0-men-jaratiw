@@ -1,8 +1,13 @@
-"""Typed, ephemeral memory primitives.
+"""Experimental ephemeral memory scaffold — NOT the canonical Qaraqalpaq schema.
 
-This module is deliberately in-memory only. It is a contract/test slice, not a
-personal-data vault: it performs no disk writes, encryption, connector access,
-or automatic ingestion. Do not pass real personal data to it.
+This module is deliberately in-memory only and must not be treated as a frozen
+ARX-137/139/141 MemoryRecord contract. Its simplified enums do not represent
+the independent record_type, cognitive_type, subject_namespace, principal_scope,
+source_trust, epistemic_status, lifecycle status, authority_scope, retention,
+access policy, lineage and deletion fields required by those architecture
+decisions. It is retained only as a temporary test scaffold pending a reviewed
+field-by-field mapping. It performs no disk writes, encryption, connector
+access, or automatic ingestion. Do not pass real personal data to it.
 """
 from __future__ import annotations
 
