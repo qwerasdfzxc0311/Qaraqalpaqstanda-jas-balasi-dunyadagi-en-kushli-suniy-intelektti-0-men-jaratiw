@@ -11,7 +11,7 @@ Qaraqalpaq is being built as a private, single-owner, local-first AI system. Thi
 - bounded task coordination and cancellation;
 - read-only, versioned synthetic source registry;
 - deterministic lexical retrieval with source spans;
-- claim/evidence binding and explicit conflict handling;
+- claim/evidence binding and conflict-preserving composition;
 - evidence-only response composition and independent verification;
 - privacy-minimizing audit manifests;
 - feedback captured as candidates only (never auto-promoted).
@@ -21,11 +21,8 @@ Qaraqalpaq is being built as a private, single-owner, local-first AI system. Thi
 Requires Python 3.12+.
 
 ```sh
-python -m venv .venv
-. .venv/bin/activate
-python -m pip install -e .
 python -m unittest discover -s tests -v
-python -m qaraqalpaq "What is the project goal?"
+PYTHONPATH=src python -m qaraqalpaq "What is the project goal?"
 ```
 
 No network access, API key, model download, database, or cloud service is required or used by this slice.
