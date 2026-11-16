@@ -49,4 +49,4 @@ def compose_answer(claims: tuple[Claim, ...]) -> str:
         for claim in group:
             value = claim.value if claim.polarity else f"emas: {claim.value}"
             lines.append(f"- {subject} — {predicate}: {value} [manba: {claim.evidence.source_id}].")
-    return "\\n".join(lines)
+    return "\n".join(lines)
