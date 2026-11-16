@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from collections import defaultdict
+
 from .models import Claim, EvidenceSpan, SourceRecord
 
 
@@ -10,9 +12,7 @@ def bind_claims(
     claims: list[Claim] = []
     for span in spans:
         record = by_id.get(span.source_id)
-        if record is None:
-            continue
-        if span.text != record.text:
+        if record is None or span.text != record.text:
             continue
         claims.append(
             Claim(
@@ -27,25 +27,26 @@ def bind_claims(
 
 
 def resolve_conflicts(claims: tuple[Claim, ...]) -> tuple[Claim, ...]:
-    """Keep incompatible claims visible; do not average or silently choose."""
-    selected: list[Claim] = []
-    for claim in claims:
-        conflict = any(
-            prior.subject == claim.subject
-            and prior.predicate == claim.predicate
-            and (prior.value != claim.value or prior.polarity != claim.polarity)
-            for prior in selected
-        )
-        if not conflict:
-            selected.append(claim)
-    return tuple(selected)
+    """Preserve every candidate; conflict interpretation belongs to the composer."""
+    return claims
 
 
 def compose_answer(claims: tuple[Claim, ...]) -> str:
     if not claims:
         return "Bu savol bo‘yicha tasdiqlangan dalil topilmadi. Hozircha aniq javob bera olmayman."
-    lines = ["Mavjud synthetic manbadagi tasdiqlangan ma’lumot:"]
+
+    grouped: dict[tuple[str, str], list[Claim]] = defaultdict(list)
     for claim in claims:
-        value = claim.value if claim.polarity else f"emas: {claim.value}"
-        lines.append(f"- {claim.subject} — {claim.predicate}: {value}.")
-    return "\n".join(lines)
+        grouped[(claim.subject, claim.predicate)].append(claim)
+
+    lines = ["Mavjud synthetic manbadagi dalillar:"]
+    for (subject, predicate), group in grouped.items():
+        distinct = {(item.value, item.polarity) for item in group}
+        if len(distinct) > 1:
+            lines.append(
+                f"- ZIDDIYAT: {subject} — {predicate} bo‘yicha manbalarda mos kelmaydigan da’volar bor."
+            )
+        for claim in group:
+            value = claim.value if claim.polarity else f"emas: {claim.value}"
+            lines.append(f"- {subject} — {predicate}: {value} [manba: {claim.evidence.source_id}].")
+    return "\\n".join(lines)
