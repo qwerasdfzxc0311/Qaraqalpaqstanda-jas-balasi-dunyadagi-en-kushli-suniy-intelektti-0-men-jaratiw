@@ -10,7 +10,7 @@ from qaraqalpaq.feedback import propose_feedback
 from qaraqalpaq.observer import observe_unicode
 from qaraqalpaq.pipeline import CognitivePipeline
 from qaraqalpaq.retrieval import SyntheticSourceRegistry
-from qaraqalpaq.models import Claim, EvidenceSpan, SourceRecord
+from qaraqalpaq.models import Claim, EvidenceSpan
 from qaraqalpaq.reasoning import compose_answer, resolve_conflicts
 
 
@@ -26,7 +26,7 @@ class CaptureTests(unittest.TestCase):
         self.assertEqual(len(captured.sha256), 64)
 
     def test_invalid_utf8_is_not_silently_repaired(self) -> None:
-        captured = capture_bytes(b"\\xff", max_bytes=10)
+        captured = capture_bytes(bytes([0xFF]), max_bytes=10)
         self.assertIsNone(captured.decoded_text)
         self.assertIsNotNone(captured.decode_error)
 
@@ -37,7 +37,7 @@ class CaptureTests(unittest.TestCase):
 
 class ObserverTests(unittest.TestCase):
     def test_nfc_is_derived_not_destructive(self) -> None:
-        original = "a\\u0301"
+        original = "a\u0301"
         captured = capture_text(original, max_bytes=20)
         observation = observe_unicode(captured)
         self.assertEqual(captured.decoded_text, original)
