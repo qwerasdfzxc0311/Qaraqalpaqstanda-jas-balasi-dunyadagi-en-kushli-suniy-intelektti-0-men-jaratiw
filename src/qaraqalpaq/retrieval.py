@@ -8,8 +8,19 @@ from pathlib import Path
 from .models import EvidenceSpan, SourceRecord
 
 
+_STOPWORDS = {
+    "a", "an", "and", "are", "about", "do", "does", "for", "how",
+    "in", "is", "it", "of", "on", "or", "the", "to", "was", "were",
+    "what", "when", "where", "which", "who", "why", "with",
+}
+
+
 def _tokens(text: str) -> set[str]:
-    return {part.casefold() for part in re.findall(r"[^\W_]+", text, flags=re.UNICODE)}
+    return {
+        part.casefold()
+        for part in re.findall(r"[^\\W_]+", text, flags=re.UNICODE)
+        if part.casefold() not in _STOPWORDS
+    }
 
 
 class SyntheticSourceRegistry:
@@ -44,7 +55,7 @@ class DeterministicRetriever:
 
     def retrieve(self, query: str, *, limit: int) -> tuple[EvidenceSpan, ...]:
         query_tokens = _tokens(query)
-        if not query_tokens:
+        if not query_tokens or limit <= 0:
             return ()
         scored: list[tuple[int, str, EvidenceSpan]] = []
         for record in self.registry.records:
@@ -52,13 +63,11 @@ class DeterministicRetriever:
             score = len(query_tokens & source_tokens)
             if score <= 0:
                 continue
-            start = 0
-            end = len(record.text)
             span = EvidenceSpan(
                 source_id=record.source_id,
-                start=start,
-                end=end,
-                text=record.text[start:end],
+                start=0,
+                end=len(record.text),
+                text=record.text,
                 source_digest=hashlib.sha256(record.text.encode("utf-8")).hexdigest(),
             )
             scored.append((score, record.source_id, span))
