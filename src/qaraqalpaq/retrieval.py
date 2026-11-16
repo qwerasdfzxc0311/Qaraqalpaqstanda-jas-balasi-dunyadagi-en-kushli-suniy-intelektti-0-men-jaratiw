@@ -18,7 +18,7 @@ _STOPWORDS = {
 def _tokens(text: str) -> set[str]:
     return {
         part.casefold()
-        for part in re.findall(r"[^\\W_]+", text, flags=re.UNICODE)
+        for part in re.findall(r"[^\W_]+", text, flags=re.UNICODE)
         if part.casefold() not in _STOPWORDS
     }
 
