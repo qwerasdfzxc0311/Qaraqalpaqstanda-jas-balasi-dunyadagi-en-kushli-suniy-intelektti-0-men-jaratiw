@@ -1,0 +1,36 @@
+{
+  "data_class": "SYNTHETIC",
+  "version": "synthetic-demo-1",
+  "records": [
+    {
+      "source_id": "SYN-001",
+      "text": "Qaraqalpaq AI is a private local-first research system.",
+      "subject": "Qaraqalpaq AI",
+      "predicate": "target",
+      "value": "private local-first research system",
+      "polarity": true,
+      "valid_from": "2026-11-16",
+      "valid_to": null
+    },
+    {
+      "source_id": "SYN-002",
+      "text": "The first cognitive core uses deterministic synthetic evidence and no language model.",
+      "subject": "First cognitive core",
+      "predicate": "inference",
+      "value": "deterministic synthetic evidence without a language model",
+      "polarity": true,
+      "valid_from": "2026-11-16",
+      "valid_to": null
+    },
+    {
+      "source_id": "SYN-003",
+      "text": "Personal data ingestion is not enabled in the current development slice.",
+      "subject": "Current development slice",
+      "predicate": "personal data ingestion",
+      "value": "enabled",
+      "polarity": false,
+      "valid_from": "2026-11-16",
+      "valid_to": null
+    }
+  ]
+}
