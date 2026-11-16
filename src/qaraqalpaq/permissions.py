@@ -1,10 +1,11 @@
-"""In-memory per-source permission broker contract.
+"""Experimental in-memory grant-check scaffold — NOT a policy reference monitor.
 
-This is an implementation/test slice only. It is not persistent, encrypted,
-connected to an operating-system identity provider, or suitable for granting
-real personal-data access. Connectors must not use it as a production security
-boundary until the persistent owner-authenticated grant store is implemented
-and independently reviewed.
+This is not a frozen ARX-152 PolicyDecision contract. It has no trusted
+principal identity, signed grant authority, durable/replay-safe audit, resource
+capability manifest, dispatch-time external revocation check, or persistent
+owner authentication. It is not suitable for authorizing real connectors or
+personal-data access. It exists only to exercise basic deny-by-default scope,
+expiry and revocation invariants with synthetic fixtures.
 """
 from __future__ import annotations
 
