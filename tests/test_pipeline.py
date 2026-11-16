@@ -10,6 +10,8 @@ from qaraqalpaq.feedback import propose_feedback
 from qaraqalpaq.observer import observe_unicode
 from qaraqalpaq.pipeline import CognitivePipeline
 from qaraqalpaq.retrieval import SyntheticSourceRegistry
+from qaraqalpaq.models import Claim, EvidenceSpan, SourceRecord
+from qaraqalpaq.reasoning import compose_answer, resolve_conflicts
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,7 +26,7 @@ class CaptureTests(unittest.TestCase):
         self.assertEqual(len(captured.sha256), 64)
 
     def test_invalid_utf8_is_not_silently_repaired(self) -> None:
-        captured = capture_bytes(b"\xff", max_bytes=10)
+        captured = capture_bytes(b"\\xff", max_bytes=10)
         self.assertIsNone(captured.decoded_text)
         self.assertIsNotNone(captured.decode_error)
 
@@ -35,7 +37,7 @@ class CaptureTests(unittest.TestCase):
 
 class ObserverTests(unittest.TestCase):
     def test_nfc_is_derived_not_destructive(self) -> None:
-        original = "a\u0301"
+        original = "a\\u0301"
         captured = capture_text(original, max_bytes=20)
         observation = observe_unicode(captured)
         self.assertEqual(captured.decoded_text, original)
@@ -76,6 +78,18 @@ class PipelineTests(unittest.TestCase):
     def test_feedback_is_candidate_only(self) -> None:
         candidate = propose_feedback("task-1", "review this correction")
         self.assertEqual(candidate.status, "CANDIDATE_ONLY")
+
+    def test_conflicting_claims_are_not_silently_discarded(self) -> None:
+        span_a = EvidenceSpan("SYN-A", 0, 1, "A", "digest-a")
+        span_b = EvidenceSpan("SYN-B", 0, 1, "B", "digest-b")
+        claims = (
+            Claim("system", "mode", "local", True, span_a),
+            Claim("system", "mode", "cloud", True, span_b),
+        )
+        kept = resolve_conflicts(claims)
+        answer = compose_answer(kept)
+        self.assertEqual(len(kept), 2)
+        self.assertIn("ZIDDIYAT", answer)
 
 
 if __name__ == "__main__":
