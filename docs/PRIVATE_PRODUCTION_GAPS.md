@@ -4,13 +4,27 @@
 
 ## Implemented in the initial core commit
 
-- [x] In-memory immutable input capture and digest.
-- [x] Derived Unicode NFC observation; original input remains unchanged.
+- [x] In-memory input capture and SHA-256 digest for the currently defined input representation.
+- [x] Derived Unicode NFC observation; original Python string remains unchanged.
 - [x] Conservative script hints; no transliteration or language correction.
 - [x] Bounded deterministic synthetic retrieval.
-- [x] Evidence-linked claims and an independent source-binding verifier.
-- [x] Candidate-only feedback.
+- [x] Evidence-linked claims and source-binding verification.
+- [x] Candidate-only feedback object.
 - [x] Audit manifest excludes raw query text.
+- [x] Basic task identity, cancellation flag and step-limit check.
+- [x] Versioned synthetic fixture registry that rejects non-synthetic fixture classes.
+
+## Important implementation limitations (verified against current code)
+
+- `capture_text` UTF-8-encodes a host-provided Python string. Those bytes are a canonical encoding of the supplied string, not proof of the original transport bytes. ARX-168's byte/text/digest ownership and digest-scope decisions remain OPEN.
+- Unicode observer currently provides NFC and broad script-range hints only. UAX #29 grapheme segmentation and Qaraqalpaq Sh/Ch orthographic-unit observation are not implemented.
+- Task coordinator does not yet provide cumulative resource accounting or deterministic cancellation injection across every pipeline stage.
+- Retriever uses lexical token overlap and currently returns the entire fixture record as its evidence span; exact matched substring offsets are not implemented.
+- Temporal validity and typed relation/conflict resolution are not implemented to ARX-170 scope. Current conflict resolver preserves claims; composer detects a basic differing-value conflict.
+- Independent verifier currently checks source/claim binding and source digest consistency, not the complete ARX-170/ARX-150 freshness, temporal, policy, replay and independent-composition requirements.
+- Audit manifest records digests and metadata, but a complete deterministic replay harness is not yet implemented.
+- Feedback is represented as a candidate object; no admission, quarantine, approval or activation lifecycle is implemented.
+- `memory.py` and `permissions.py` remain experimental in-memory contract scaffolds. They are not canonical persistent memory or a production policy reference monitor.
 
 ## Required before importing any personal data
 
@@ -30,7 +44,7 @@
 ## Required before calling this a capable personal AI
 
 - [ ] Persistent, typed personal memory with independent namespace, epistemic status, trust and lifecycle fields.
-- [ ] Retrieval/ranking that is evaluated against user-approved synthetic and then explicitly authorized personal fixtures.
+- [ ] Retrieval/ranking evaluated against user-approved synthetic and then explicitly authorized personal fixtures.
 - [ ] Reasoning and planning evaluations with uncertainty and abstention.
 - [ ] Model adapter decision. A model-free symbolic engine cannot provide broad natural-language understanding; any local model must be separately benchmarked for device fit, privacy, quality and power.
 - [ ] Controlled learning lifecycle: candidate, quarantine, isolated evaluation, regression/security tests, owner approval, versioned activation and rollback.
@@ -45,20 +59,13 @@
 - Automatic import of all personal sources.
 - Claims of human-like consciousness or sentience.
 
+## CI evidence
+
+For PR #2 head commit `0525a0fc5b70ce423b8ea8f5cd3a2d8b5f070995`, GitHub Actions Python CI run #30 (run ID `43825248547`) completed successfully. This verifies only the configured compileall and current unittest suite at that exact commit. It does not establish full ARX-170 acceptance, private Production readiness, security review, legal review or native-language review. Any later commit requires its own CI result.
+
 ## Release truthfulness
 
-The initial core is an early development slice. It is not production-ready, does not store personal memory, does not encrypt a personal vault, does not use an LLM, and has not been security-reviewed. Capability status must be tied to a commit and reproducible tests.
-
-
-## Additional contract slices (2026-11-16)
-
-- [x] Typed memory record contract and volatile in-memory store (src/qaraqalpaq/memory.py).
-- [x] Memory contract tests for provenance, namespaces, temporal validity, confidence bounds, conflict links and correction lineage (tests/test_memory.py).
-- [x] Per-source, explicit-scope read permission broker contract (src/qaraqalpaq/permissions.py).
-- [x] Permission tests for no-grant denial, source isolation, scope restriction, read-only operation allowlist, expiry and revocation (tests/test_permissions.py).
-
-**Critical distinction:** these are volatile in-memory contract implementations only. They are not durable grants, owner authentication, encryption, OS key storage, connector enforcement, or a production vault. No real personal data may be connected or imported. The new commits' CI status is not yet verified by the available workflow-run view; do not infer a pass from earlier commits.
-
+The current core is an early implementation slice, not a production-ready personal AI. It does not store persistent personal memory, encrypt a personal vault, use an LLM, or provide a secure personal-data plane. It has not received independent security, legal or native-language sign-off. Capability status must be tied to a commit and reproducible tests.
 
 ## Architecture reconciliation hold — ARX-137 / ARX-139 / ARX-141 / ARX-152
 
@@ -73,3 +80,15 @@ Before any persistent memory implementation:
 - [ ] Independent review of enum semantics and synthetic transition oracle.
 
 The current permission broker is only an experimental in-memory scope/expiry/revocation test scaffold. It is not the ARX-152 Permission Reference Monitor and cannot authorize connector dispatch.
+
+## Next implementation sequence — ARX-175
+
+Canonical first vertical slice is the 12-module end-to-end synthetic-only pipeline in ARX-170 §170.2. Input foundation is milestone 1, not the entire slice.
+
+1. Reconcile raw bytes vs host Unicode string, digest scope, offsets and normalization ownership against ARX-167/168/169/152. Keep unresolved decisions OPEN; do not infer a canonical contract.
+2. Pin and document Unicode/grapheme implementation and version only after dependency/provenance/license review.
+3. Implement input milestones against IN-001…IN-015 with exact original/derived assertions and deterministic cancellation injection.
+4. Continue milestones 2–4: retrieval/evidence, composition/verification, audit/feedback.
+5. Final acceptance requires all applicable synthetic suites, end-to-end replay and review evidence.
+
+No personal data, third-party corpus, persistent memory, credentials, external API/model, database, cloud or deployment is authorized by this sequence.
